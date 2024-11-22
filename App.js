@@ -1,20 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { KeyboardAvoidingView } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthProvider } from "./src/context/AuthContext";
+import RootNavigator from "./src/navigation/RootNavigator";
+import ThemeProvider from "./src/themes/ThemeProvider";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+const App = () => (
+    <AuthProvider>
+        <SafeAreaProvider>
+            <KeyboardAvoidingView behavior="hight" style={{ flex: 1 }}>
+                <ThemeProvider>
+                    <RootNavigator />
+                </ThemeProvider>
+            </KeyboardAvoidingView>
+        </SafeAreaProvider>
+    </AuthProvider>
+);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
