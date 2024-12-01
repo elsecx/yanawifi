@@ -2,12 +2,11 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { headerOptions } from "../libs/config";
 
-import {
-    CustomersListScreen,
-    CustomerDetailsScreen,
-    AddCustomerScreen,
-    UpdateCustomerScreen,
-} from "../screens";
+// Import Screens
+import CustomersListScreen from "../screens/Customers/CustomersListScreen";
+import CustomerDetailsScreen from "../screens/Customers/CustomerDetailsScreen";
+import AddCustomerScreen from "../screens/Customers/AddCustomerScreen";
+import UpdateCustomerScreen from "../screens/Customers/UpdateCustomerScreen";
 
 const Stack = createNativeStackNavigator();
 

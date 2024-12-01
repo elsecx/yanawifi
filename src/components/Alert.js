@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { Layout, Text, useTheme } from "@ui-kitten/components";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const Alert = ({ message, type = "danger", onClose, style }) => {
+const Alert = ({ message, type = "danger", onClose = null, style = {} }) => {
     const theme = useTheme();
 
     const colorScheme = {
@@ -68,6 +68,7 @@ const Alert = ({ message, type = "danger", onClose, style }) => {
                         color: colorScheme.iconColor,
                     }}
                     size={20}
+                    onPress={onClose}
                 />
             )}
         </Layout>
@@ -76,7 +77,6 @@ const Alert = ({ message, type = "danger", onClose, style }) => {
 
 const styles = StyleSheet.create({
     alertContainer: {
-        width: "100%",
         flexDirection: "row",
         alignSelf: "center",
         padding: 10,

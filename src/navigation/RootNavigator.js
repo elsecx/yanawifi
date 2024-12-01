@@ -17,13 +17,12 @@ const Stack = createNativeStackNavigator();
 const RootNavigator = () => {
     const { isAuthenticated } = useContext(AuthContext);
 
-    // Menampilkan layar loading jika status autentikasi belum diketahui
     if (isAuthenticated === null) {
         return (
             <NavigationContainer>
                 <Stack.Screen
                     name="Loading"
-                    component={() => null} // Ganti dengan komponen loading jika diperlukan
+                    component={() => null}
                     options={{ headerShown: false }}
                 />
             </NavigationContainer>

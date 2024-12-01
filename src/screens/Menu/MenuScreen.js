@@ -1,6 +1,7 @@
-import React, { useState, useLayoutEffect } from "react";
-import { ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useLayoutEffect, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { getCurrentDate } from "../../libs/utils";
+import { TouchableOpacity, ImageBackground } from "react-native";
 import {
     useTheme,
     Layout,
@@ -11,12 +12,12 @@ import {
     ListItem,
 } from "@ui-kitten/components";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { ImageBackground } from "react-native";
 import styles from "./styles";
 
 const MenuScreen = ({ navigation }) => {
     const theme = useTheme();
     const [menuVisible, setMenuVisible] = useState(false);
+    const { logout } = useContext(AuthContext);
 
     const menuData = [
         {
@@ -24,48 +25,44 @@ const MenuScreen = ({ navigation }) => {
             desc: "Daftarkan pelanggan baru ke salah satu paket layanan internet.",
             icon: "access-point-plus",
             route: "Orders",
-            screen: "AddOrder",
+            screen: "CreateOrder",
         },
         {
             title: "Paket Internet",
-            desc: "Kelola paket layanan internet yang tersedia.",
+            desc: "Kelola paket layanan internet yang tersedia, atau buat paket layanan baru.",
             icon: "package-variant",
             route: "Packages",
             screen: "PackagesList",
         },
         {
             title: "Data Pelanggan",
-            desc: "Lihat dan kelola data pelanggan yang terdaftar.",
+            desc: "Lihat dan kelola data pelanggan yang terdaftar, atau daftarkan pelanggan baru.",
             icon: "account-details-outline",
             route: "Customers",
             screen: "CustomersList",
         },
         {
             title: "Pembayaran Tagihan",
-            desc: "Proses pembayaran tagihan pelanggan.",
+            desc: "Lakukan pembayaran tagihan pelanggan yang telah terdaftar.",
             icon: "cash-register",
             route: "Orders",
             screen: "PayOrders",
         },
-        {
-            title: "Koneksi Suspended",
-            desc: "Monitor pelanggan dengan tagihan yang belum dibayar.",
-            icon: "access-point-off",
-            route: "Orders",
-            screen: "UnpaidOrders",
-        },
     ];
 
-    const handleMenuSelect = (index) => {
-        setMenuVisible(false);
-        switch (index) {
+    const handleMenuSelect = async (selectedIndex) => {
+        switch (selectedIndex) {
             case 0:
-                console.log("oke");
+                navigation.navigate("AboutScreen");
                 break;
             case 1:
-                console.log("oke");
+                navigation.navigate("HelpScreen");
+                break;
+            case 2:
+                await logout();
                 break;
             default:
+                console.log("Pilihan tidak dikenal");
                 break;
         }
     };
@@ -111,6 +108,12 @@ const MenuScreen = ({ navigation }) => {
                             onBackdropPress={() => setMenuVisible(false)}
                         >
                             <MenuItem
+                                title="Tentang"
+                                accessoryLeft={() => (
+                                    <Icon name="information" size={20} />
+                                )}
+                            />
+                            <MenuItem
                                 title="Bantuan"
                                 accessoryLeft={() => (
                                     <Icon name="help" size={20} />
@@ -119,14 +122,9 @@ const MenuScreen = ({ navigation }) => {
                             <MenuItem
                                 title="Keluar"
                                 accessoryLeft={() => (
-                                    <Icon
-                                        name="logout"
-                                        size={20}
-                                        color={theme["color-danger-700"]}
-                                    />
+                                    <Icon name="logout" size={20} />
                                 )}
                                 style={{
-                                    color: theme["color-danger-700"],
                                     backgroundColor: theme["color-danger-200"],
                                 }}
                             />
@@ -138,45 +136,37 @@ const MenuScreen = ({ navigation }) => {
     }, [theme, navigation, menuVisible]);
 
     return (
-        <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={styles.container}
-        >
+        <Layout style={styles.container}>
             <Layout style={styles.header}>
                 <Text category="h4">Menu Utama</Text>
             </Layout>
 
-            <Layout style={styles.content}>
-                <List
-                    data={menuData}
-                    renderItem={({ item, index }) => (
-                        <ListItem
-                            key={index}
-                            title={() => (
-                                <Text category="h6">{item.title}</Text>
-                            )}
-                            description={() => (
-                                <Text appearance="hint">{item.desc}</Text>
-                            )}
-                            accessoryLeft={() => (
-                                <Icon
-                                    name={item.icon}
-                                    size={35}
-                                    color={theme["color-primary-400"]}
-                                />
-                            )}
-                            onPress={() =>
-                                navigation.navigate(item.route, {
-                                    screen: item.screen,
-                                })
-                            }
-                            style={styles.menuItem}
-                        />
-                    )}
-                    style={styles.menuContainer}
-                />
-            </Layout>
-        </ScrollView>
+            <List
+                data={menuData}
+                renderItem={({ item }) => (
+                    <ListItem
+                        title={() => <Text category="h6">{item.title}</Text>}
+                        description={() => (
+                            <Text appearance="hint">{item.desc}</Text>
+                        )}
+                        accessoryLeft={() => (
+                            <Icon
+                                name={item.icon}
+                                size={35}
+                                color={theme["color-primary-400"]}
+                            />
+                        )}
+                        onPress={() =>
+                            navigation.navigate(item.route, {
+                                screen: item.screen,
+                            })
+                        }
+                        style={styles.menuItem}
+                    />
+                )}
+                style={styles.menuContainer}
+            />
+        </Layout>
     );
 };
 

@@ -1,14 +1,20 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, {
+    useState,
+    useEffect,
+    useLayoutEffect,
+    useCallback,
+} from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
     fetchInfo,
     fetchPackages,
-    fetchPaymentHistory,
     updatePackage,
     deletePackage,
 } from "../../services/api";
 import {
     cleanData,
     formatDate,
+    formatMonthName,
     formatRupiah,
     getCurrentDate,
 } from "../../libs/utils";
@@ -20,6 +26,7 @@ import {
     View,
     TouchableOpacity,
     Keyboard,
+    ImageBackground,
 } from "react-native";
 import {
     useTheme,
@@ -33,7 +40,6 @@ import {
 } from "@ui-kitten/components";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { ImageBackground } from "react-native";
 import BouncingLoader from "../../components/BouncingLoader";
 import HorizontalLine from "../../components/HorizontalLine";
 import Alert from "../../components/Alert";
@@ -42,14 +48,23 @@ import styles from "./styles";
 
 const HomeScreen = ({ navigation }) => {
     const theme = useTheme();
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+
     const [refreshing, setRefreshing] = useState(false);
     const [keyboardOffset, setKeyboardOffset] = useState(0);
     const [loading, setLoading] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
+    const [year, setYear] = useState(currentYear);
+    const [month, setMonth] = useState(currentMonth);
+
+    const isNextDisabled =
+        year > currentYear || (year === currentYear && month >= currentMonth);
+
     const [infoData, setInfoData] = useState({});
     const [packagesData, setPackagesData] = useState([]);
-    const [paymentHistoryData, setPaymentHistoryData] = useState([]);
 
     const [packageAlert, setPackageAlert] = useState({
         alertVisible: false,
@@ -80,7 +95,8 @@ const HomeScreen = ({ navigation }) => {
         },
         {
             label: "Pendaftaran",
-            route: "AddCustomer",
+            route: "Orders",
+            screen: "CreateOrder",
             icon: "access-point-plus",
         },
         {
@@ -99,7 +115,7 @@ const HomeScreen = ({ navigation }) => {
 
     const getInfoData = async () => {
         try {
-            const response = await fetchInfo();
+            const response = await fetchInfo(month, year);
             setInfoData(response);
         } catch (error) {
             console.log("Error fetching info:", error);
@@ -112,15 +128,6 @@ const HomeScreen = ({ navigation }) => {
             setPackagesData(response);
         } catch (error) {
             console.log("Error fetching packages:", error);
-        }
-    };
-
-    const getPaymentHistoryData = async () => {
-        try {
-            const response = await fetchPaymentHistory();
-            setPaymentHistoryData(response);
-        } catch (error) {
-            console.log("Error fetching payment history:", error);
         }
     };
 
@@ -237,7 +244,6 @@ const HomeScreen = ({ navigation }) => {
         setRefreshing(true);
         await getInfoData();
         await getPackagesData();
-        await getPaymentHistoryData();
         setRefreshing(false);
         setLoading(false);
     };
@@ -247,11 +253,56 @@ const HomeScreen = ({ navigation }) => {
             setLoading(true);
             await getInfoData();
             await getPackagesData();
-            await getPaymentHistoryData();
             setLoading(false);
         };
+
         loadData();
-    }, []);
+    }, [month, year]);
+
+    useFocusEffect(
+        useCallback(() => {
+            const fetchData = async () => {
+                setLoading(true);
+                await getInfoData();
+                await getPackagesData();
+                setLoading(false);
+            };
+
+            fetchData();
+        }, [])
+    );
+
+    const handlePrevDate = async () => {
+        setLoading(true);
+        try {
+            if (month === 1) {
+                setMonth(12);
+                setYear((prevYear) => prevYear - 1);
+            } else {
+                setMonth((prevMonth) => prevMonth - 1);
+            }
+        } catch (error) {
+            console.error("Error fetching data for previous date:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleNextDate = async () => {
+        setLoading(true);
+        try {
+            if (month === 12) {
+                setMonth(1);
+                setYear((prevYear) => prevYear + 1);
+            } else {
+                setMonth((prevMonth) => prevMonth + 1);
+            }
+        } catch (error) {
+            console.error("Error fetching data for next date:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (packagesData?.length > 0) {
@@ -287,9 +338,7 @@ const HomeScreen = ({ navigation }) => {
         navigation.setOptions({
             header: () => {
                 return loading ? (
-                    <Layout style={styles.loadingContainer}>
-                        <BouncingLoader size="large" />
-                    </Layout>
+                    <Layout style={styles.loadingContainer}></Layout>
                 ) : (
                     <ImageBackground
                         source={require("../../../assets/img/bg.jpeg")}
@@ -335,7 +384,7 @@ const HomeScreen = ({ navigation }) => {
                                     color: theme["color-primary-800"],
                                 }}
                             >
-                                {infoData.customers ?? 0} Orang
+                                {infoData.orders ?? 0} Orang
                             </Text>
                         </LinearGradient>
                     </ImageBackground>
@@ -369,6 +418,53 @@ const HomeScreen = ({ navigation }) => {
                 </Layout>
             ) : (
                 <>
+                    <Layout style={styles.overviewContainer}>
+                        <Button
+                            disabled={loading}
+                            status="primary"
+                            size="tiny"
+                            appearance="outline"
+                            onPress={handlePrevDate}
+                        >
+                            <View>
+                                <Icon
+                                    name="arrow-left-bold"
+                                    size={25}
+                                    color={theme["color-primary-500"]}
+                                />
+                            </View>
+                        </Button>
+                        <Layout style={styles.overviewContent}>
+                            <Text
+                                category="h6"
+                                style={{ color: theme["color-primary-800"] }}
+                            >
+                                {formatMonthName(month)}
+                            </Text>
+                            <Text
+                                category="h6"
+                                style={{ color: theme["color-primary-800"] }}
+                            >
+                                {year}
+                            </Text>
+                        </Layout>
+                        <Button
+                            disabled={loading || isNextDisabled}
+                            status="primary"
+                            size="tiny"
+                            appearance="outline"
+                            onPress={handleNextDate}
+                        >
+                            <View>
+                                <Icon
+                                    name="arrow-right-bold"
+                                    size={25}
+                                    color={theme["color-primary-500"]}
+                                />
+                            </View>
+                        </Button>
+                    </Layout>
+
                     <Layout style={styles.headerContainer}>
                         <Text
                             category="h4"
@@ -393,7 +489,7 @@ const HomeScreen = ({ navigation }) => {
                                         color: theme["color-success-800"],
                                     }}
                                 >
-                                    Terhubung
+                                    Sudah Dibayar
                                 </Text>
                                 <Text
                                     category="h4"
@@ -421,7 +517,7 @@ const HomeScreen = ({ navigation }) => {
                                         color: theme["color-danger-800"],
                                     }}
                                 >
-                                    Terputus
+                                    Belum Dibayar
                                 </Text>
                                 <Text
                                     category="h4"
@@ -552,28 +648,20 @@ const HomeScreen = ({ navigation }) => {
                         }
                         style={styles.paymentHistoryContainer}
                     >
-                        {paymentHistoryData.length > 0 ? (
-                            paymentHistoryData.map((item) => (
+                        {infoData?.payment_history?.length > 0 ? (
+                            infoData?.payment_history?.map((item) => (
                                 <Card
                                     key={item.id}
                                     style={styles.cardHistory}
                                     appearance="outline"
-                                    disabled
-                                    footer={() => (
-                                        <Layout
-                                            style={styles.cardFooterHistory}
-                                        >
-                                            <Text category="s1">
-                                                {formatDate(item.last_paid_at)}
-                                            </Text>
-                                            <Text
-                                                category="h4"
-                                                status="primary"
-                                            >
-                                                {formatRupiah(item.price)}
-                                            </Text>
-                                        </Layout>
-                                    )}
+                                    onPress={() =>
+                                        navigation.navigate("Orders", {
+                                            screen: "OrderDetails",
+                                            params: {
+                                                id: item.order_id,
+                                            },
+                                        })
+                                    }
                                 >
                                     <Layout style={styles.cardContentHistory}>
                                         <Layout
@@ -585,20 +673,24 @@ const HomeScreen = ({ navigation }) => {
                                                 category="h4"
                                                 status="primary"
                                             >
-                                                {item.package}
+                                                {item.package_name}
                                             </Text>
                                             <Text category="h6">
                                                 {item.customer_name}
                                             </Text>
                                         </Layout>
                                         <Badge
-                                            data={item.status}
-                                            status={
-                                                item.status === "PAID"
-                                                    ? "success"
-                                                    : "danger"
-                                            }
+                                            data="Sudah Dibayar"
+                                            status="success"
                                         />
+                                    </Layout>
+                                    <Layout style={styles.cardFooterHistory}>
+                                        <Text category="s1">
+                                            {formatDate(item.effective_at)}
+                                        </Text>
+                                        <Text category="h4" status="primary">
+                                            {formatRupiah(item.amount)}
+                                        </Text>
                                     </Layout>
                                 </Card>
                             ))
@@ -803,6 +895,7 @@ const HomeScreen = ({ navigation }) => {
                                     <Button
                                         status="danger"
                                         style={{ flex: 1 }}
+                                        disabled={packageAlert.alertLoading}
                                         onPress={() =>
                                             handleDeletePackage(
                                                 modalPackage.data.id

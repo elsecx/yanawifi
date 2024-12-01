@@ -7,19 +7,24 @@ const HorizontalLine = ({ txt }) => {
     return (
         <View style={styles.horizontalLine}>
             <View
-                style={[
-                    styles.line,
-                    { backgroundColor: theme["color-primary-200"] },
-                ]}
+                style={{
+                    ...styles.line,
+                    backgroundColor: theme["color-primary-600"],
+                }}
             />
-            <Text style={[styles.txt, { color: theme["color-basic-700"] }]}>
+            <Text
+                style={{
+                    ...styles.txt,
+                    color: theme["color-primary-800"],
+                }}
+            >
                 {txt}
             </Text>
             <View
-                style={[
-                    styles.line,
-                    { backgroundColor: theme["color-primary-200"] },
-                ]}
+                style={{
+                    ...styles.line,
+                    backgroundColor: theme["color-primary-600"],
+                }}
             />
         </View>
     );
@@ -37,8 +42,7 @@ const styles = StyleSheet.create({
 
     line: {
         flex: 1,
-        height: 1,
-        backgroundColor: "#ccc",
+        height: 1.2,
     },
 
     txt: {

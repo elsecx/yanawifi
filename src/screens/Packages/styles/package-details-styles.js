@@ -3,6 +3,14 @@ import { StyleSheet, Dimensions } from "react-native";
 const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
+    headerNavigation: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: 0.1,
+    },
+
     loadingContainer: {
         flex: 1,
         height: height,
@@ -29,31 +37,52 @@ const styles = StyleSheet.create({
     },
 
     contentContainer: {
-        flexGrow: 1,
+        flex: 1,
         gap: 10,
-        marginVertical: 10,
-        paddingHorizontal: 10,
-        paddingBottom: 10,
     },
 
-    card: {
-        overflow: "hidden",
-        alignItems: "center",
-        justifyContent: "center",
+    headerContainer: {
+        margin: 10,
         padding: 10,
+        gap: 10,
         borderRadius: 10,
+        borderWidth: 1,
+    },
+
+    listHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: 15,
         borderWidth: StyleSheet.hairlineWidth,
     },
 
-    cardHeader: {
-        backgroundColor: "transparent",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
+    card: {
+        marginHorizontal: 10,
     },
 
-    floatingButton: {
-        margin: 10,
+    cardContent: {
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: 5,
+    },
+
+    cardHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: 0.01,
+    },
+
+    label: {
+        fontSize: 16,
+        fontWeight: "bold",
+        width: "50%",
+    },
+
+    value: {
+        flex: 1,
+        fontSize: 16,
     },
 });
 

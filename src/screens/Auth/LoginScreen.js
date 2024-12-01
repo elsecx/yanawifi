@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { TouchableOpacity } from "react-native";
+import { StatusBar, TouchableOpacity } from "react-native";
 import { Text, Input, Button } from "@ui-kitten/components";
 import Icon from "@expo/vector-icons/FontAwesome6";
 import Background from "../../components/Background";
@@ -53,6 +53,12 @@ const LoginScreen = () => {
 
     return (
         <Background>
+            <StatusBar
+                barStyle="dark-content"
+                backgroundColor="transparent"
+                translucent
+            />
+
             <Text style={styles.title}>WIFI</Text>
 
             {error ? <Text style={styles.errorMessage}>{error}</Text> : null}

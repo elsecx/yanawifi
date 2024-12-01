@@ -17,6 +17,24 @@ export const formatDate = (dateString) => {
     return `${day} ${month} ${year}`;
 };
 
+export const formatMonthName = (month) => {
+    const monthNames = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
+    ];
+    return monthNames[month - 1];
+};
+
 export function formatPhoneNumber(phoneNumber) {
     const cleaned = ("" + phoneNumber).replace(/\D/g, "");
 

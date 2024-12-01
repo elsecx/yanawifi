@@ -1,10 +1,18 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+    StatusBar,
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "@expo/vector-icons/FontAwesome6";
 
 // Screens
-import { HomeScreen, CustomersListScreen, MenuScreen } from "../screens";
+import HomeScreen from "../screens/Home/HomeScreen";
+import OrdersListScreen from "../screens/Orders/OrdersListScreen";
+import MenuScreen from "../screens/Menu/MenuScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +42,7 @@ const MainNavigator = () => (
                             iconName = "house";
                             label = "Beranda";
                             break;
-                        case "Customers":
+                        case "OrdersList":
                             iconName = "network-wired";
                             label = "Berlangganan";
                             break;
@@ -66,7 +74,7 @@ const MainNavigator = () => (
                                 <Icon
                                     name={iconName}
                                     size={20}
-                                    color={isFocused ? "#fff" : "#0090FA"}
+                                    color={isFocused ? "#fff" : "#8B99DA"}
                                 />
                                 {isFocused && (
                                     <View style={styles.textContainer}>
@@ -92,7 +100,11 @@ const MainNavigator = () => (
             component={HomeScreen}
             options={{ headerShown: true }}
         />
-        <Tab.Screen name="Customers" component={CustomersListScreen} />
+        <Tab.Screen
+            name="OrdersList"
+            component={OrdersListScreen}
+            options={{ headerShown: false }}
+        />
         <Tab.Screen name="Menu" component={MenuScreen} />
     </Tab.Navigator>
 );
@@ -102,7 +114,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         backgroundColor: "#fff",
         borderColor: "#EDEDED",
-        borderTopWidth: 1,
+        borderTopWidth: 2,
         borderStartWidth: 2,
         borderEndWidth: 2,
         borderTopLeftRadius: 30,
@@ -127,7 +139,7 @@ const styles = StyleSheet.create({
     },
 
     iconContainerActive: {
-        backgroundColor: "#0090FA",
+        backgroundColor: "#8B99DA",
         paddingVertical: 13,
         borderRadius: 50,
     },

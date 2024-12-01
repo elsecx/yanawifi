@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { addPackage } from "../../services/api";
-
+import { updatePackage, fetchPackage } from "../../services/api";
 import { StatusBar } from "react-native";
 import { useTheme, Layout, Input, Button, Text } from "@ui-kitten/components";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import Alert from "../../components/Alert";
 import styles from "./styles/add-package-styles";
 
-const AddPackageScreen = () => {
+const UpdatePackageScreen = ({ navigation, route }) => {
+    const { id } = route.params;
     const theme = useTheme();
     const [focusedInput, setFocusedInput] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -17,53 +17,69 @@ const AddPackageScreen = () => {
         message: "",
     });
 
-    // Package Fields
+    // State untuk data paket
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
+
+    useEffect(() => {
+        const fetchPackageData = async () => {
+            try {
+                const response = await fetchPackage(id);
+                if (response) {
+                    setName(response.name || "");
+                    setPrice(response.price ? response.price.toString() : "");
+                    setDescription(response.description || "");
+                }
+            } catch (error) {
+                console.error("Error fetching package data:", error);
+            }
+        };
+
+        fetchPackageData();
+    }, [id]);
 
     const handleSubmit = async () => {
         if (!name || !price || !description) {
             setAlert({
                 visible: true,
                 type: "danger",
-                message: "Semua field harus diisi.",
+                message: "Semua kolom harus diisi.",
             });
             return;
         }
 
         setLoading(true);
         try {
-            const response = await addPackage({
-                name,
-                price,
-                description,
+            const updatedData = { name, price: parseFloat(price), description };
+            await updatePackage(id, updatedData);
+            setAlert({
+                visible: true,
+                type: "success",
+                message: "Paket berhasil diperbarui!",
             });
 
-            if (response.status === "success") {
+            setAlert({
+                visible: true,
+                type: "success",
+                message: "Paket berhasil diperbarui!",
+            });
+
+            setTimeout(() => {
                 setAlert({
-                    visible: true,
+                    visible: false,
                     type: "success",
-                    message: "Paket layanan berhasil ditambahkan.",
+                    message: "",
                 });
-                setName("");
-                setPrice("");
-                setDescription("");
-            } else {
-                console.error("Error adding package:", response.message);
-                setAlert({
-                    visible: true,
-                    type: "danger",
-                    message:
-                        "Terjadi kesalahan saat menambahkan paket layanan.",
-                });
-            }
+
+                navigation.goBack();
+            }, 2000);
         } catch (error) {
-            console.error("Error adding package:", error);
+            console.error("Error updating package:", error);
             setAlert({
                 visible: true,
                 type: "danger",
-                message: "Terjadi kesalahan saat menambahkan paket layanan.",
+                message: "Gagal memperbarui paket.",
             });
         } finally {
             setLoading(false);
@@ -88,7 +104,7 @@ const AddPackageScreen = () => {
                     <Text category="h4" status="primary">
                         Paket Layanan
                     </Text>
-                    <Text category="s1">Buat paket layanan baru</Text>
+                    <Text category="s1">Perbarui paket layanan {name}</Text>
                 </Layout>
             </Layout>
 
@@ -96,15 +112,8 @@ const AddPackageScreen = () => {
                 <Alert
                     message={alert.message}
                     type={alert.type}
-                    onClose={() => {
-                        setAlert({
-                            ...alert,
-                            visible: false,
-                        });
-                    }}
-                    style={{
-                        marginHorizontal: 10,
-                    }}
+                    onClose={() => setAlert({ ...alert, visible: false })}
+                    style={{ marginHorizontal: 10, marginBottom: 10 }}
                 />
             )}
 
@@ -147,10 +156,10 @@ const AddPackageScreen = () => {
                 onPress={handleSubmit}
                 disabled={loading}
             >
-                {loading ? "Loading..." : "Tambah"}
+                {loading ? "Memperbarui..." : "Perbarui"}
             </Button>
         </Layout>
     );
 };
 
-export default AddPackageScreen;
+export default UpdatePackageScreen;

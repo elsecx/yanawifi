@@ -43,6 +43,22 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
 
+    overviewContainer: {
+        flex: 1,
+        padding: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "justify-between",
+    },
+
+    overviewContent: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+    },
+
     headerContainer: {
         backgroundColor: "transparent",
         margin: 10,
@@ -119,6 +135,7 @@ const styles = StyleSheet.create({
     },
 
     cardContentHistory: {
+        backgroundColor: "transparent",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
@@ -130,10 +147,14 @@ const styles = StyleSheet.create({
     },
 
     cardFooterHistory: {
+        margin: -10,
+        marginTop: 15,
+        paddingVertical: 10,
+        borderTopWidth: 1,
+        borderColor: "#EDEDED",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: 10,
     },
 
     modalBackdrop: {

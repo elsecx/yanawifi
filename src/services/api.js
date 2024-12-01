@@ -2,13 +2,15 @@ import { apiClient } from "../libs/api-client";
 import { loginService } from "./apis/auth-service";
 import {
     fetchPackages,
+    fetchPackage,
+    addPackage,
     updatePackage,
     deletePackage,
 } from "./apis/packages-service";
-import { fetchOrders, fetchPaymentHistory } from "./apis/orders-service";
+import { fetchOrders, fetchOrder } from "./apis/orders-service";
 
-export const fetchInfo = async () => {
-    const response = await apiClient("/info", {
+export const fetchInfo = async (month, year) => {
+    const response = await apiClient(`/info?month=${month}&year=${year}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -23,5 +25,11 @@ export const fetchInfo = async () => {
 };
 
 export { loginService };
-export { fetchPackages, updatePackage, deletePackage };
-export { fetchOrders, fetchPaymentHistory };
+export {
+    fetchPackages,
+    fetchPackage,
+    addPackage,
+    updatePackage,
+    deletePackage,
+};
+export { fetchOrders, fetchOrder };

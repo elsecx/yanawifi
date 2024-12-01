@@ -1,9 +1,11 @@
 import React from "react";
-import { KeyboardAvoidingView } from "react-native";
+import { KeyboardAvoidingView, LogBox } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "./src/context/AuthContext";
 import RootNavigator from "./src/navigation/RootNavigator";
 import ThemeProvider from "./src/themes/ThemeProvider";
+
+LogBox.ignoreAllLogs(true);
 
 const App = () => (
     <AuthProvider>
