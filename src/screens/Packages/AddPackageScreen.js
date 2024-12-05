@@ -147,7 +147,7 @@ const AddPackageScreen = () => {
                 onPress={handleSubmit}
                 disabled={loading}
             >
-                {loading ? "Loading..." : "Tambah"}
+                {loading ? "Loading..." : "Buat Paket Layanan"}
             </Button>
         </Layout>
     );

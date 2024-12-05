@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { fetchOrders } from "../../services/api";
-import { formatDate, formatRupiah, getCurrentDate } from "../../libs/utils";
+import { formatDate, formatRupiah } from "../../libs/utils";
 
 import {
     ImageBackground,
@@ -57,6 +57,7 @@ const OrdersListScreen = ({ navigation }) => {
 
     const onRefresh = async () => {
         setRefreshing(true);
+        fetchReset();
         await getOrders(search);
     };
 
@@ -71,6 +72,7 @@ const OrdersListScreen = ({ navigation }) => {
     };
 
     const handleFilterSelect = (selectedIndex) => {
+        setFilterVisible(false);
         const filterOptions = ["", "paid", "unpaid"];
         setFilterStatus(filterOptions[selectedIndex.row]);
     };
@@ -96,7 +98,7 @@ const OrdersListScreen = ({ navigation }) => {
                     tintColor={theme["color-primary-600"]}
                 />
             }
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
             stickyHeaderIndices={[0]}
             ListHeaderComponent={
                 <ImageBackground
@@ -111,14 +113,14 @@ const OrdersListScreen = ({ navigation }) => {
                                     status="control"
                                     style={{ lineHeight: 28 }}
                                 >
-                                    Pelanggan
+                                    Subscribers
                                 </Text>
                                 <Text
-                                    category="s1"
+                                    category="h6"
                                     status="control"
                                     style={{ lineHeight: 16 }}
                                 >
-                                    {getCurrentDate()}
+                                    Total: {orders.length} Subscribers
                                 </Text>
                             </Layout>
                             <Layout style={styles.row}>

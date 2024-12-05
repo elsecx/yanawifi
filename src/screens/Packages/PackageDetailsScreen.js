@@ -4,7 +4,14 @@ import { deletePackage, fetchPackage } from "../../services/api";
 import { formatDate, formatRupiah } from "../../libs/utils";
 
 import { StatusBar, TouchableOpacity, FlatList } from "react-native";
-import { useTheme, Layout, Card, Text, Button } from "@ui-kitten/components";
+import {
+    useTheme,
+    Layout,
+    Card,
+    Text,
+    Button,
+    Modal,
+} from "@ui-kitten/components";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import BouncingLoader from "../../components/BouncingLoader";
 import Badge from "../../components/Badge";
@@ -16,6 +23,8 @@ const PackageDetailsScreen = ({ navigation, route }) => {
 
     const [loading, setLoading] = useState(true);
     const [packageData, setPackageData] = useState(null);
+
+    const [confirmModal, setConfirmModal] = useState(false);
 
     const getPackage = useCallback(async () => {
         try {
@@ -39,11 +48,23 @@ const PackageDetailsScreen = ({ navigation, route }) => {
         await getPackage();
     };
 
+    const handleDelete = async () => {
+        try {
+            setLoading(true);
+            await deletePackage(id);
+            navigation.goBack();
+        } catch (error) {
+            console.error("Error deleting package:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useLayoutEffect(() => {
         navigation.setOptions({
             headerTitle: "Detail Paket Layanan",
             headerRight: () => (
-                <TouchableOpacity onPress={handleDelete}>
+                <TouchableOpacity onPress={() => setConfirmModal(true)}>
                     <Icon
                         name="trash-can-outline"
                         size={25}
@@ -53,15 +74,6 @@ const PackageDetailsScreen = ({ navigation, route }) => {
             ),
         });
     }, [navigation, theme]);
-
-    const handleDelete = async () => {
-        try {
-            await deletePackage(id);
-            navigation.goBack();
-        } catch (error) {
-            console.error("Error deleting package:", error);
-        }
-    };
 
     if (loading) {
         return (
@@ -212,6 +224,53 @@ const PackageDetailsScreen = ({ navigation, route }) => {
                     theme={theme}
                 />
             </Layout>
+
+            <Modal
+                animationType="fade"
+                visible={confirmModal}
+                backdropStyle={styles.modalBackdrop}
+                onBackdropPress={() => setConfirmModal(false)}
+            >
+                <Card style={styles.modal} disabled>
+                    <Layout style={styles.modalContent}>
+                        <Layout style={styles.modalHeader}>
+                            <Text category="h5">Hapus Paket</Text>
+                        </Layout>
+
+                        <Layout style={styles.modalBody}>
+                            <Text category="p1">
+                                Apakah anda yakin akan menghapus paket{" "}
+                                {packageData.name ?? "ini"}?{`\n`}
+                                Semua data yang berkaitan dengan paket ini akan
+                                terhapus.
+                                {`\n\n`}
+                                Tekan "Ya" jika ingin melanjutkan.
+                            </Text>
+                        </Layout>
+
+                        <Layout style={styles.modalFooter}>
+                            <Layout style={styles.row}>
+                                <Button
+                                    appearance="outline"
+                                    status="basic"
+                                    style={{ flex: 1 }}
+                                    onPress={() => setConfirmModal(false)}
+                                >
+                                    Batal
+                                </Button>
+                                <Button
+                                    status="danger"
+                                    style={{ flex: 1 }}
+                                    disabled={loading}
+                                    onPress={handleDelete}
+                                >
+                                    {loading ? "Loading..." : "Ya"}
+                                </Button>
+                            </Layout>
+                        </Layout>
+                    </Layout>
+                </Card>
+            </Modal>
         </>
     );
 };

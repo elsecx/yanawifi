@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import { fetchOrder } from "../../services/api";
+import { fetchOrder, payOrder } from "../../services/api";
 import { formatDate, formatRupiah, formatPhoneNumber } from "../../libs/utils";
 
 import { StatusBar, FlatList, View } from "react-native";
-import { useTheme, Layout, Text, Card } from "@ui-kitten/components";
+import { useTheme, Layout, Text, Card, Button } from "@ui-kitten/components";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import BouncingLoader from "../../components/BouncingLoader";
 import Badge from "../../components/Badge";
+import Alert from "../../components/Alert";
 import styles from "./styles/order-details-styles";
 
 const OrderDetailsScreen = ({ route, navigation }) => {
@@ -15,9 +16,52 @@ const OrderDetailsScreen = ({ route, navigation }) => {
     const [loading, setLoading] = useState(true);
     const [order, setOrder] = useState(null);
 
+    const [alert, setAlert] = useState({
+        visible: false,
+        type: "success",
+        message: "",
+    });
+
     useEffect(() => {
         getOrder();
     }, []);
+
+    const getOrder = async () => {
+        try {
+            const response = await fetchOrder(id);
+            if (response) setOrder(response);
+            else console.log("Error fetching order");
+        } catch (error) {
+            console.log("Fetching Order Error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const onRefresh = async () => {
+        setLoading(true);
+        await getOrder();
+    };
+
+    const handlePay = async (id) => {
+        try {
+            const response = await payOrder(id);
+
+            if (response.status === "success") {
+                setAlert({
+                    visible: true,
+                    type: "success",
+                    message: "Pembayaran Berhasil",
+                });
+
+                getOrder();
+            }
+        } catch (error) {
+            console.log("Error paying order:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useLayoutEffect(() => {
         if (order) {
@@ -44,23 +88,6 @@ const OrderDetailsScreen = ({ route, navigation }) => {
             });
         }
     }, [order]);
-
-    const getOrder = async () => {
-        try {
-            const response = await fetchOrder(id);
-            if (response) setOrder(response);
-            else console.log("Error fetching order");
-        } catch (error) {
-            console.log("Fetching Order Error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const onRefresh = async () => {
-        setLoading(true);
-        await getOrder();
-    };
 
     if (loading) {
         return (
@@ -109,12 +136,8 @@ const OrderDetailsScreen = ({ route, navigation }) => {
                 value={formatDate(order.register_at)}
             />
             <DetailRow
-                label="Masa Tenggang"
+                label="Kadaluarsa"
                 value={formatDate(order.subscription_end)}
-            />
-            <DetailRow
-                label="Pembayaran Terakhir"
-                value={formatDate(order.updated_at)}
             />
             <DetailRow label="Nama Pelanggan" value={order.customer_name} />
             <DetailRow
@@ -128,6 +151,11 @@ const OrderDetailsScreen = ({ route, navigation }) => {
             <Text category="h4" status="primary">
                 {formatRupiah(order.price)}/bulan
             </Text>
+            {order.status === "UNPAID" && (
+                <Button status="primary" onPress={() => handlePay(id)}>
+                    Bayar Tagihan
+                </Button>
+            )}
         </Layout>
     );
 
@@ -191,6 +219,22 @@ const OrderDetailsScreen = ({ route, navigation }) => {
             />
 
             <Layout style={styles.container}>
+                {alert.visible && (
+                    <Alert
+                        message={alert.message}
+                        type={alert.type}
+                        onClose={() => {
+                            setAlert({
+                                ...alert,
+                                visible: false,
+                            });
+                        }}
+                        style={{
+                            marginTop: 10,
+                            marginHorizontal: 10,
+                        }}
+                    />
+                )}
                 <OrderInfo order={order} theme={theme} />
                 <PaymentHistory
                     data={order.payment_history}

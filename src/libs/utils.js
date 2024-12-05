@@ -38,6 +38,8 @@ export const formatMonthName = (month) => {
 export function formatPhoneNumber(phoneNumber) {
     const cleaned = ("" + phoneNumber).replace(/\D/g, "");
 
+    if (cleaned.length <= 1) return cleaned;
+
     const match = cleaned.match(/^(\d{2})(\d{3})(\d{3})(\d{3,})$/);
 
     if (match) {

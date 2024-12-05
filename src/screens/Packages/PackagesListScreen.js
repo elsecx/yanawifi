@@ -18,7 +18,6 @@ const PackagesListScreen = ({ navigation }) => {
 
     const getPackages = useCallback(async () => {
         try {
-            setLoading(true);
             const response = await fetchPackages();
             setPackageData(response || []);
         } catch (error) {
@@ -149,6 +148,7 @@ const PackagesListScreen = ({ navigation }) => {
                     </Layout>
                 )}
             />
+
             <Button
                 size="large"
                 appearance="outline"

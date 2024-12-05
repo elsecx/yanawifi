@@ -709,7 +709,7 @@ const HomeScreen = ({ navigation }) => {
             )}
 
             <Modal
-                animationType="slide"
+                animationType="fade"
                 visible={modalPackage.visible}
                 backdropStyle={styles.modalBackdrop}
                 onBackdropPress={() =>

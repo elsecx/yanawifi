@@ -84,6 +84,41 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
     },
+
+    modalBackdrop: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    modal: {
+        width: width * 0.9,
+    },
+
+    modalContent: {
+        margin: -10,
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: 10,
+    },
+
+    modalHeader: {
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderColor: "#EDEDED",
+    },
+
+    modalBody: {
+        gap: 5,
+        justifyContent: "space-between",
+    },
+
+    modalFooter: {
+        flexDirection: "column",
+        justifyContent: "center",
+        gap: 10,
+    },
 });
 
 export default styles;

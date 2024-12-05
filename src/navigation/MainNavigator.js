@@ -43,8 +43,8 @@ const MainNavigator = () => (
                             label = "Beranda";
                             break;
                         case "OrdersList":
-                            iconName = "network-wired";
-                            label = "Berlangganan";
+                            iconName = "hand-holding-dollar";
+                            label = "Subscribers";
                             break;
                         case "Menu":
                             iconName = "bars";

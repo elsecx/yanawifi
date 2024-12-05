@@ -27,3 +27,28 @@ export const fetchOrder = async (id) => {
         throw new Error(response.message || "Fetching order failed");
     }
 };
+
+export const createOrder = async (data) => {
+    const response = await apiClient("/orders/c", {
+        method: "POST",
+        data,
+    });
+
+    if (response.status === "success") {
+        return response;
+    } else {
+        throw new Error(response.message || "Creating order failed");
+    }
+};
+
+export const payOrder = async (id) => {
+    const response = await apiClient(`/orders/${id}/pay`, {
+        method: "PUT",
+    });
+
+    if (response.status === "success") {
+        return response;
+    } else {
+        throw new Error(response.message || "Pay order failed");
+    }
+};

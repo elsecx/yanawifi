@@ -21,6 +21,7 @@ const MenuScreen = ({ navigation }) => {
 
     const menuData = [
         {
+            id: 1,
             title: "Registrasi Pelanggan",
             desc: "Daftarkan pelanggan baru ke salah satu paket layanan internet.",
             icon: "access-point-plus",
@@ -28,6 +29,7 @@ const MenuScreen = ({ navigation }) => {
             screen: "CreateOrder",
         },
         {
+            id: 2,
             title: "Paket Internet",
             desc: "Kelola paket layanan internet yang tersedia, atau buat paket layanan baru.",
             icon: "package-variant",
@@ -35,6 +37,7 @@ const MenuScreen = ({ navigation }) => {
             screen: "PackagesList",
         },
         {
+            id: 3,
             title: "Data Pelanggan",
             desc: "Lihat dan kelola data pelanggan yang terdaftar, atau daftarkan pelanggan baru.",
             icon: "account-details-outline",
@@ -42,6 +45,7 @@ const MenuScreen = ({ navigation }) => {
             screen: "CustomersList",
         },
         {
+            id: 4,
             title: "Pembayaran Tagihan",
             desc: "Lakukan pembayaran tagihan pelanggan yang telah terdaftar.",
             icon: "cash-register",
@@ -104,6 +108,7 @@ const MenuScreen = ({ navigation }) => {
                                 </TouchableOpacity>
                             )}
                             visible={menuVisible}
+                            keyExtractor={(index) => index.toString()}
                             onSelect={(index) => handleMenuSelect(index.row)}
                             onBackdropPress={() => setMenuVisible(false)}
                         >
@@ -143,6 +148,7 @@ const MenuScreen = ({ navigation }) => {
 
             <List
                 data={menuData}
+                keyExtractor={(item, index) => `${item.id}-${index}`}
                 renderItem={({ item }) => (
                     <ListItem
                         title={() => <Text category="h6">{item.title}</Text>}
