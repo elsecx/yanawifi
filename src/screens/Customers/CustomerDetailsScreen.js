@@ -23,7 +23,6 @@ const CustomerDetailsScreen = ({ navigation, route }) => {
     const { id } = route.params;
     const theme = useTheme();
     const [loading, setLoading] = useState(false);
-    const [refreshing, setRefreshing] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [customer, setCustomer] = useState([]);
 
@@ -42,7 +41,6 @@ const CustomerDetailsScreen = ({ navigation, route }) => {
             console.error("Fetching Customer Error:", error);
         } finally {
             setLoading(false);
-            setRefreshing(false);
         }
     }, [id]);
 
@@ -52,10 +50,7 @@ const CustomerDetailsScreen = ({ navigation, route }) => {
         }, [getCustomer])
     );
 
-    const onRefresh = async () => {
-        setLoading(true);
-        await getPackage();
-    };
+    const onRefresh = async () => await getCustomer();
 
     const handlePay = async (id) => {
         try {

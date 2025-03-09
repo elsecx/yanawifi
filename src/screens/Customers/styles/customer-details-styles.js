@@ -85,6 +85,30 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 
+    bodyContainer: {
+        margin: 10,
+        padding: 10,
+        gap: 10,
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        borderWidth: 1,
+        overflow: "hidden",
+    },
+
+    mapContainer: {
+        width: "100%",
+        height: 200,
+        overflow: "hidden",
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#EDEDED",
+    },
+
+    map: {
+        width: "100%",
+        height: "100%",
+    },
+
     modalBackdrop: {
         flex: 1,
         backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -118,30 +142,6 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "center",
         gap: 10,
-    },
-
-    bodyContainer: {
-        margin: 10,
-        padding: 10,
-        gap: 10,
-        backgroundColor: "#fff",
-        borderRadius: 10,
-        borderWidth: 1,
-        overflow: "hidden",
-    },
-
-    mapContainer: {
-        width: "100%",
-        height: 200,
-        overflow: "hidden",
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: "#EDEDED",
-    },
-
-    map: {
-        width: "100%",
-        height: "100%",
     },
 });
 
